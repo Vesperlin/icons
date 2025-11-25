@@ -1,0 +1,557 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vesper Obsidian Nexus</title>
+  <style>
+    :root {
+      --bg: #0b0b0f;
+      --panel: #11111a;
+      --border: #1f1f2b;
+      --text: #e6e6ea;
+      --muted: #9a9aa3;
+      --accent: #c0c0cc;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Inter', 'HarmonyOS Sans', system-ui, -apple-system, sans-serif;
+      background: radial-gradient(circle at 20% 20%, rgba(70,70,80,0.08), transparent 30%),
+                  radial-gradient(circle at 80% 0%, rgba(255,255,255,0.05), transparent 25%),
+                  var(--bg);
+      color: var(--text);
+    }
+    a { color: var(--accent); text-decoration: none; }
+    .shell {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      min-height: 100vh;
+    }
+    .sidebar {
+      border-right: 1px solid var(--border);
+      padding: 32px 24px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      background: linear-gradient(180deg, rgba(25,25,34,0.7), rgba(12,12,18,0.9));
+      backdrop-filter: blur(20px);
+    }
+    .logo {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding-bottom: 24px;
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    .stack { display: grid; gap: 12px; }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+    }
+    label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+    input, select, textarea, button {
+      width: 100%;
+      background: #0f0f17;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      color: var(--text);
+      font-size: 14px;
+    }
+    button {
+      cursor: pointer;
+      background: linear-gradient(135deg, #1a1a24, #191926);
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    button:hover { border-color: var(--accent); transform: translateY(-1px); }
+    .main {
+      padding: 32px;
+      display: grid;
+      gap: 24px;
+    }
+    .grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+    .pill { display: inline-block; padding: 6px 10px; border: 1px solid var(--border); border-radius: 999px; font-size: 12px; color: var(--muted); }
+    .section-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .section-head h2 { margin: 0; font-size: 20px; letter-spacing: 0.02em; }
+    .icon-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
+    .icon-card {
+      padding: 14px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: #0f0f17;
+      display: grid;
+      gap: 8px;
+    }
+    .icon-card img { width: 42px; height: 42px; object-fit: contain; filter: grayscale(1); }
+    .muted { color: var(--muted); font-size: 13px; }
+    .bar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .two { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); }
+    .badge { border: 1px solid var(--border); padding: 6px 8px; border-radius: 8px; font-size: 12px; color: var(--muted); }
+    .list { display: grid; gap: 8px; }
+    .list-item { padding: 12px; border: 1px solid var(--border); border-radius: 10px; background: #0d0d15; display: flex; justify-content: space-between; align-items: center; }
+    .danger { color: #f45b5b; }
+    .success { color: #8fe3a6; }
+    @media (max-width: 960px) { .shell { grid-template-columns: 1fr; } .sidebar { position: relative; height: auto; } }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="logo">Vesper Nexus</div>
+      <div class="stack">
+        <div class="card">
+          <div class="section-head"><h2>账户</h2><span class="pill" id="sessionRole">未登录</span></div>
+          <label>邮箱</label>
+          <input id="email" type="email" placeholder="you@example.com" />
+          <label>昵称</label>
+          <input id="nickname" placeholder="代号" />
+          <label>密码</label>
+          <input id="password" type="password" placeholder="••••••••" />
+          <div class="bar">
+            <button id="sendCode">获取验证码</button>
+            <input id="verifyCode" placeholder="验证码" style="flex:1" />
+          </div>
+          <input id="developerCode" placeholder="开发者识别码（可选）" />
+          <button id="register">注册并绑定</button>
+          <button id="login">登录</button>
+          <div class="bar">
+            <input id="resetCode" placeholder="重置验证码" style="flex:1" />
+            <button id="forgot">找回密码</button>
+            <button id="reset">重置密码</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="section-head"><h2>开发者</h2><span class="pill">Vesper 引力场</span></div>
+          <label>绑定识别码</label>
+          <input id="bindCode" placeholder="粘贴未使用识别码" />
+          <button id="bind">绑定</button>
+          <label>批量生成</label>
+          <div class="bar">
+            <select id="codeLevel">
+              <option value="developer">Developer</option>
+              <option value="admin">Admin</option>
+              <option value="root">Root</option>
+            </select>
+            <input id="codeQty" type="number" min="1" value="1" style="width:90px" />
+          </div>
+          <input id="customCode" placeholder="自定义码（选填）" />
+          <button id="generate">生成识别码</button>
+          <div class="list" id="generated"></div>
+        </div>
+        <div class="card">
+          <div class="section-head"><h2>VIP</h2><span class="pill" id="vipStatus">未开通</span></div>
+          <label>套餐</label>
+          <select id="vipPlan"><option value="month">月卡</option><option value="season">季卡</option><option value="year">年卡</option></select>
+          <label>支付通道</label>
+          <select id="payChannel"><option value="alipay">支付宝</option><option value="wechat">微信</option><option value="usdt">USDT</option></select>
+          <input id="coupon" placeholder="优惠码" />
+          <button id="purchase">提交订单</button>
+          <div class="muted" id="orderHint"></div>
+        </div>
+      </div>
+    </aside>
+    <main class="main">
+      <section class="card">
+        <div class="section-head"><h2>工作台</h2><span class="pill">矩阵 · 自适应 · 纯黑</span></div>
+        <p class="muted">多分区资源、可编排图标库、知识矩阵、支付自动化、开发者身份链。全部在浏览器和后端服务内一键完成。</p>
+        <div class="bar two">
+          <div class="badge">域名绑定：在部署指南内设置 Nginx/反代后即刻生效</div>
+          <div class="badge">支付识别：订单创建即记录，回调确认自动升级 VIP</div>
+          <div class="badge">安全：JWT + 绑定的识别码 + 审计日志</div>
+          <div class="badge">设备记忆：本机绑定后自动进入开发者模式</div>
+        </div>
+      </section>
+
+      <section class="card" id="iconsPanel">
+        <div class="section-head">
+          <h2>图标矩阵</h2>
+          <div class="bar">
+            <input id="groupName" placeholder="新分组名称" style="width:180px" />
+            <button id="createGroup">创建分组</button>
+            <button id="refreshIcons">刷新</button>
+          </div>
+        </div>
+        <div id="iconGroups"></div>
+      </section>
+
+      <section class="card">
+        <div class="section-head">
+          <h2>知识 / 工具 / 资源</h2>
+          <div class="bar">
+            <input id="blockCategory" placeholder="类别" style="width:140px" />
+            <input id="blockTitle" placeholder="标题" style="width:180px" />
+            <input id="blockContent" placeholder="内容" style="width:280px" />
+            <button id="addBlock">新增</button>
+            <button id="refreshBlocks">刷新</button>
+          </div>
+        </div>
+        <div class="grid" id="blocks"></div>
+      </section>
+
+      <section class="card">
+        <div class="section-head">
+          <h2>云盘 / 剪藏 / 工具箱</h2>
+          <div class="bar">
+            <input id="searchInput" placeholder="站内近似搜索" style="flex:1" />
+            <button id="searchBtn">搜索</button>
+            <span class="pill" id="searchCount">0 命中</span>
+          </div>
+        </div>
+        <div class="two">
+          <div class="stack">
+            <h3>云盘上传</h3>
+            <div class="bar">
+              <input type="file" id="fileInput" />
+              <select id="fileVisibility" style="width:140px"><option value="private">私密</option><option value="public">公开</option></select>
+              <input id="fileTags" placeholder="标签" />
+              <button id="uploadFile">上传</button>
+            </div>
+            <div class="list" id="fileList"></div>
+          </div>
+          <div class="stack">
+            <h3>网页剪藏</h3>
+            <input id="clipTitle" placeholder="标题" />
+            <input id="clipUrl" placeholder="来源链接" />
+            <input id="clipExcerpt" placeholder="摘要" />
+            <textarea id="clipContent" placeholder="正文或备注" rows="3"></textarea>
+            <div class="bar">
+              <input id="clipTags" placeholder="标签" />
+              <select id="clipVisibility" style="width:140px"><option value="private">私密</option><option value="public">公开</option></select>
+              <button id="saveClip">保存剪藏</button>
+            </div>
+            <div class="list" id="clipList"></div>
+          </div>
+        </div>
+        <div class="section-head" style="margin-top:12px"><h3>工具箱 / AI 接口</h3><button id="refreshTools">刷新</button></div>
+        <div class="bar" style="margin-bottom:12px">
+          <input id="toolName" placeholder="名称" />
+          <input id="toolUrl" placeholder="链接或接口地址" />
+          <input id="toolCategory" placeholder="类别" style="width:160px" />
+          <input id="toolDesc" placeholder="描述" style="flex:1" />
+          <button id="addTool">新增工具</button>
+        </div>
+        <div class="grid" id="toolGrid"></div>
+      </section>
+
+      <section class="card">
+        <div class="section-head">
+          <h2>知识库笔记 / 博客发布</h2>
+          <div class="bar">
+            <button id="refreshNotes">刷新笔记</button>
+            <button id="refreshPosts">刷新博客</button>
+          </div>
+        </div>
+        <div class="two">
+          <div class="stack">
+            <h3>快速笔记</h3>
+            <input id="noteTitle" placeholder="标题" />
+            <textarea id="noteContent" rows="3" placeholder="内容"></textarea>
+            <input id="noteTags" placeholder="标签" />
+            <select id="noteVisibility" style="width:160px"><option value="private">私密</option><option value="public">公开</option></select>
+            <button id="saveNote">保存笔记</button>
+            <div class="list" id="noteList"></div>
+          </div>
+          <div class="stack">
+            <h3>博客文章</h3>
+            <input id="postTitle" placeholder="文章标题" />
+            <textarea id="postContent" rows="4" placeholder="内容"></textarea>
+            <select id="postStatus" style="width:160px"><option value="draft">草稿</option><option value="published">发布</option></select>
+            <button id="savePost">提交文章</button>
+            <div class="list" id="postList"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="section-head">
+          <h2>审计 / 用户</h2>
+          <div class="bar"><button id="loadUsers">加载用户</button><button id="loadAudit">加载日志</button></div>
+        </div>
+        <div class="two">
+          <div>
+            <h3>用户</h3>
+            <div class="list" id="users"></div>
+          </div>
+          <div>
+            <h3>审计</h3>
+            <div class="list" id="audit"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script>
+    const state = { token: localStorage.getItem('vesper_token') || '', role: localStorage.getItem('vesper_role') || 'visitor' };
+    const headers = () => state.token ? { 'Content-Type': 'application/json', Authorization: `Bearer ${state.token}` } : { 'Content-Type': 'application/json' };
+    const sessionRole = document.getElementById('sessionRole');
+    const vipStatus = document.getElementById('vipStatus');
+
+    function setSession(role) {
+      state.role = role || 'visitor';
+      sessionRole.textContent = role || '未登录';
+      localStorage.setItem('vesper_role', state.role);
+    }
+
+    function setToken(token) {
+      state.token = token;
+      if (token) localStorage.setItem('vesper_token', token); else localStorage.removeItem('vesper_token');
+    }
+
+    async function api(url, options = {}) {
+      const resp = await fetch(url, { ...options, headers: { ...headers(), ...(options.headers || {}) } });
+      if (!resp.ok) throw new Error((await resp.json()).error || '请求失败');
+      return resp.json();
+    }
+
+    document.getElementById('sendCode').onclick = async () => {
+      const email = document.getElementById('email').value;
+      await api('/api/auth/send-code', { method: 'POST', body: JSON.stringify({ email }) });
+      alert('验证码已发送');
+    };
+
+    document.getElementById('register').onclick = async () => {
+      const payload = {
+        email: document.getElementById('email').value,
+        password: document.getElementById('password').value,
+        nickname: document.getElementById('nickname').value || '访客',
+        verificationCode: document.getElementById('verifyCode').value,
+        developerCode: document.getElementById('developerCode').value || undefined
+      };
+      const data = await api('/api/auth/register', { method: 'POST', body: JSON.stringify(payload) });
+      setToken(data.token); setSession(data.role);
+      alert('注册完成，身份：' + data.role);
+    };
+
+    document.getElementById('login').onclick = async () => {
+      const payload = { email: document.getElementById('email').value, password: document.getElementById('password').value };
+      const data = await api('/api/auth/login', { method: 'POST', body: JSON.stringify(payload) });
+      setToken(data.token); setSession(data.role);
+      vipStatus.textContent = data.vipLevel || '未开通';
+    };
+
+    document.getElementById('forgot').onclick = async () => {
+      await api('/api/auth/forgot', { method: 'POST', body: JSON.stringify({ email: document.getElementById('email').value }) });
+      alert('已发送重置验证码');
+    };
+
+    document.getElementById('reset').onclick = async () => {
+      const payload = { email: document.getElementById('email').value, resetCode: document.getElementById('resetCode').value, password: document.getElementById('password').value };
+      await api('/api/auth/reset', { method: 'POST', body: JSON.stringify(payload) });
+      alert('密码已重置');
+    };
+
+    document.getElementById('bind').onclick = async () => {
+      const code = document.getElementById('bindCode').value;
+      const data = await api('/api/developer/bind', { method: 'POST', body: JSON.stringify({ developerCode: code }) });
+      setToken(data.token); setSession(data.role);
+    };
+
+    document.getElementById('generate').onclick = async () => {
+      const level = document.getElementById('codeLevel').value;
+      const quantity = Number(document.getElementById('codeQty').value || 1);
+      const customCode = document.getElementById('customCode').value || undefined;
+      const data = await api('/api/developer/generate', { method: 'POST', body: JSON.stringify({ level, quantity, customCode }) });
+      document.getElementById('generated').innerHTML = data.codes.map(c => `<div class="list-item"><span>${c}</span></div>`).join('');
+    };
+
+    document.getElementById('purchase').onclick = async () => {
+      const payload = { plan: document.getElementById('vipPlan').value, channel: document.getElementById('payChannel').value, coupon: document.getElementById('coupon').value || undefined };
+      const data = await api('/api/vip/purchase', { method: 'POST', body: JSON.stringify(payload) });
+      document.getElementById('orderHint').textContent = `订单 ${data.orderId} 待支付金额 ${data.payable}（回调 /api/vip/confirm 自动识别）`;
+    };
+
+    async function loadIcons() {
+      const data = await api('/api/icons');
+      const container = document.getElementById('iconGroups');
+      container.innerHTML = '';
+      data.groups.forEach(group => {
+        const groupIcons = data.icons.filter(i => i.group_id === group.id);
+        const panel = document.createElement('div');
+        panel.className = 'card';
+        const head = document.createElement('div');
+        head.className = 'section-head';
+        head.innerHTML = `<h3>${group.name}</h3><span class="pill">${groupIcons.length} 项</span>`;
+        panel.appendChild(head);
+        const grid = document.createElement('div');
+        grid.className = 'icon-grid';
+        groupIcons.forEach(icon => {
+          const card = document.createElement('a');
+          card.className = 'icon-card';
+          card.href = icon.url; card.target = '_blank';
+          card.innerHTML = `<div class="bar"><img src="${icon.image || 'https://placehold.co/64/0f0f17/ffffff?text=V'}" alt="${icon.title}" /><div><div>${icon.title}</div><div class="muted">${icon.url}</div></div></div>`;
+          grid.appendChild(card);
+        });
+        panel.appendChild(grid);
+        if (['developer','admin','root'].includes(state.role)) {
+          const form = document.createElement('div');
+          form.className = 'bar';
+          form.innerHTML = `<input placeholder="标题" data-group="${group.id}" class="iconTitle"/><input placeholder="链接" data-group="${group.id}" class="iconUrl"/><input placeholder="图标地址" data-group="${group.id}" class="iconImg"/><button data-group="${group.id}" class="iconAdd">添加</button>`;
+          panel.appendChild(form);
+        }
+        container.appendChild(panel);
+      });
+      document.querySelectorAll('.iconAdd').forEach(btn => {
+        btn.onclick = async (e) => {
+          const gid = e.target.dataset.group;
+          const title = document.querySelector(`.iconTitle[data-group="${gid}"]`).value;
+          const url = document.querySelector(`.iconUrl[data-group="${gid}"]`).value;
+          const image = document.querySelector(`.iconImg[data-group="${gid}"]`).value;
+          await api('/api/icons', { method: 'POST', body: JSON.stringify({ groupId: gid, title, url, image }) });
+          loadIcons();
+        };
+      });
+    }
+
+    document.getElementById('createGroup').onclick = async () => {
+      const name = document.getElementById('groupName').value;
+      await api('/api/icons/group', { method: 'POST', body: JSON.stringify({ name }) });
+      loadIcons();
+    };
+
+    document.getElementById('refreshIcons').onclick = loadIcons;
+
+    async function loadBlocks() {
+      const data = await api('/api/knowledge');
+      const wrap = document.getElementById('blocks');
+      wrap.innerHTML = '';
+      data.forEach(b => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `<div class="section-head"><h3>${b.title}</h3><span class="pill">${b.category}</span></div><div class="muted">${b.content}</div>`;
+        wrap.appendChild(card);
+      });
+    }
+
+    document.getElementById('addBlock').onclick = async () => {
+      const category = document.getElementById('blockCategory').value;
+      const title = document.getElementById('blockTitle').value;
+      const content = document.getElementById('blockContent').value;
+      await api('/api/knowledge', { method: 'POST', body: JSON.stringify({ category, title, content }) });
+      loadBlocks();
+    };
+    document.getElementById('refreshBlocks').onclick = loadBlocks;
+
+    async function loadFiles() {
+      const rows = await api('/api/files');
+      document.getElementById('fileList').innerHTML = rows.map(f => `<div class="list-item"><div><div>${f.original_name}</div><div class="muted">${Math.ceil(f.size/1024)} KB · ${f.visibility}</div></div><a class="pill" href="${f.url}" target="_blank">下载</a></div>`).join('');
+    }
+
+    document.getElementById('uploadFile').onclick = async () => {
+      const fileInput = document.getElementById('fileInput');
+      if (!fileInput.files.length) return alert('请选择文件');
+      const form = new FormData();
+      form.append('file', fileInput.files[0]);
+      const visibility = document.getElementById('fileVisibility').value;
+      const tags = document.getElementById('fileTags').value;
+      const resp = await fetch('/api/files/upload', { method: 'POST', headers: state.token ? { Authorization: `Bearer ${state.token}` } : {}, body: form });
+      if (!resp.ok) return alert('上传失败');
+      const data = await resp.json();
+      await api(`/api/files/${data.id}/meta`, { method: 'POST', body: JSON.stringify({ visibility, tags }) });
+      loadFiles();
+    };
+
+    async function loadClips() {
+      const data = await api('/api/clips');
+      document.getElementById('clipList').innerHTML = data.map(c => `<div class="list-item"><div><div>${c.title}</div><div class="muted">${c.source_url || '无来源'} · ${c.visibility}</div></div><span class="pill">${c.tags || ''}</span></div>`).join('');
+    }
+
+    document.getElementById('saveClip').onclick = async () => {
+      const payload = {
+        title: document.getElementById('clipTitle').value,
+        sourceUrl: document.getElementById('clipUrl').value,
+        excerpt: document.getElementById('clipExcerpt').value,
+        content: document.getElementById('clipContent').value,
+        tags: document.getElementById('clipTags').value,
+        visibility: document.getElementById('clipVisibility').value
+      };
+      await api('/api/clips', { method: 'POST', body: JSON.stringify(payload) });
+      loadClips();
+    };
+
+    async function loadTools() {
+      const tools = await api('/api/tools');
+      document.getElementById('toolGrid').innerHTML = tools.map(t => `<div class="card"><div class="section-head"><h3>${t.name}</h3><span class="pill">${t.category || '工具'}</span></div><div class="muted">${t.description || ''}</div><a class="pill" href="${t.url}" target="_blank">访问</a></div>`).join('');
+    }
+
+    document.getElementById('addTool').onclick = async () => {
+      const payload = {
+        name: document.getElementById('toolName').value,
+        url: document.getElementById('toolUrl').value,
+        category: document.getElementById('toolCategory').value,
+        description: document.getElementById('toolDesc').value
+      };
+      await api('/api/tools', { method: 'POST', body: JSON.stringify(payload) });
+      loadTools();
+    };
+
+    document.getElementById('refreshTools').onclick = loadTools;
+
+    async function loadNotes() {
+      const notes = await api('/api/notes');
+      document.getElementById('noteList').innerHTML = notes.map(n => `<div class="list-item"><div><div>${n.title}</div><div class="muted">${n.tags || ''} · ${n.visibility}</div></div><span class="pill">${new Date(n.updated_at).toLocaleString()}</span></div>`).join('');
+    }
+
+    document.getElementById('saveNote').onclick = async () => {
+      const payload = {
+        title: document.getElementById('noteTitle').value,
+        content: document.getElementById('noteContent').value,
+        tags: document.getElementById('noteTags').value,
+        visibility: document.getElementById('noteVisibility').value
+      };
+      await api('/api/notes', { method: 'POST', body: JSON.stringify(payload) });
+      loadNotes();
+    };
+
+    async function loadPosts() {
+      const posts = await api('/api/posts');
+      document.getElementById('postList').innerHTML = posts.map(p => `<div class="list-item"><div><div>${p.title}</div><div class="muted">${p.status}</div></div><span class="pill">${new Date(p.updated_at || p.created_at).toLocaleString()}</span></div>`).join('');
+    }
+
+    document.getElementById('savePost').onclick = async () => {
+      const payload = {
+        title: document.getElementById('postTitle').value,
+        content: document.getElementById('postContent').value,
+        status: document.getElementById('postStatus').value
+      };
+      await api('/api/posts', { method: 'POST', body: JSON.stringify(payload) });
+      loadPosts();
+    };
+
+    document.getElementById('refreshNotes').onclick = loadNotes;
+    document.getElementById('refreshPosts').onclick = loadPosts;
+
+    document.getElementById('searchBtn').onclick = async () => {
+      const q = document.getElementById('searchInput').value;
+      const data = await api(`/api/search?q=${encodeURIComponent(q)}`);
+      const count = data.icons.length + data.tools.length + data.posts.length + data.clips.length;
+      document.getElementById('searchCount').textContent = `${count} 命中`;
+      document.getElementById('toolGrid').scrollIntoView({ behavior: 'smooth' });
+    };
+
+    document.getElementById('loadUsers').onclick = async () => {
+      const data = await api('/api/admin/users');
+      document.getElementById('users').innerHTML = data.map(u => `<div class="list-item"><div><div>${u.email}</div><div class="muted">${u.nickname} · ${u.vip_level || 'none'}</div></div><span class="pill">${u.is_admin ? 'admin' : (u.developer_code_id ? 'developer' : 'user')}</span></div>`).join('');
+    };
+
+    document.getElementById('loadAudit').onclick = async () => {
+      const data = await api('/api/audit');
+      document.getElementById('audit').innerHTML = data.map(l => `<div class="list-item"><div><div>${l.action}</div><div class="muted">${l.detail}</div></div><span class="pill">${new Date(l.created_at).toLocaleString()}</span></div>`).join('');
+    };
+
+    loadIcons();
+    loadBlocks();
+    loadFiles();
+    loadClips();
+    loadTools();
+    loadNotes();
+    loadPosts();
+    setSession(state.role);
+  </script>
+</body>
+</html>
