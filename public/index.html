@@ -196,6 +196,80 @@
 
       <section class="card">
         <div class="section-head">
+          <h2>云盘 / 剪藏 / 工具箱</h2>
+          <div class="bar">
+            <input id="searchInput" placeholder="站内近似搜索" style="flex:1" />
+            <button id="searchBtn">搜索</button>
+            <span class="pill" id="searchCount">0 命中</span>
+          </div>
+        </div>
+        <div class="two">
+          <div class="stack">
+            <h3>云盘上传</h3>
+            <div class="bar">
+              <input type="file" id="fileInput" />
+              <select id="fileVisibility" style="width:140px"><option value="private">私密</option><option value="public">公开</option></select>
+              <input id="fileTags" placeholder="标签" />
+              <button id="uploadFile">上传</button>
+            </div>
+            <div class="list" id="fileList"></div>
+          </div>
+          <div class="stack">
+            <h3>网页剪藏</h3>
+            <input id="clipTitle" placeholder="标题" />
+            <input id="clipUrl" placeholder="来源链接" />
+            <input id="clipExcerpt" placeholder="摘要" />
+            <textarea id="clipContent" placeholder="正文或备注" rows="3"></textarea>
+            <div class="bar">
+              <input id="clipTags" placeholder="标签" />
+              <select id="clipVisibility" style="width:140px"><option value="private">私密</option><option value="public">公开</option></select>
+              <button id="saveClip">保存剪藏</button>
+            </div>
+            <div class="list" id="clipList"></div>
+          </div>
+        </div>
+        <div class="section-head" style="margin-top:12px"><h3>工具箱 / AI 接口</h3><button id="refreshTools">刷新</button></div>
+        <div class="bar" style="margin-bottom:12px">
+          <input id="toolName" placeholder="名称" />
+          <input id="toolUrl" placeholder="链接或接口地址" />
+          <input id="toolCategory" placeholder="类别" style="width:160px" />
+          <input id="toolDesc" placeholder="描述" style="flex:1" />
+          <button id="addTool">新增工具</button>
+        </div>
+        <div class="grid" id="toolGrid"></div>
+      </section>
+
+      <section class="card">
+        <div class="section-head">
+          <h2>知识库笔记 / 博客发布</h2>
+          <div class="bar">
+            <button id="refreshNotes">刷新笔记</button>
+            <button id="refreshPosts">刷新博客</button>
+          </div>
+        </div>
+        <div class="two">
+          <div class="stack">
+            <h3>快速笔记</h3>
+            <input id="noteTitle" placeholder="标题" />
+            <textarea id="noteContent" rows="3" placeholder="内容"></textarea>
+            <input id="noteTags" placeholder="标签" />
+            <select id="noteVisibility" style="width:160px"><option value="private">私密</option><option value="public">公开</option></select>
+            <button id="saveNote">保存笔记</button>
+            <div class="list" id="noteList"></div>
+          </div>
+          <div class="stack">
+            <h3>博客文章</h3>
+            <input id="postTitle" placeholder="文章标题" />
+            <textarea id="postContent" rows="4" placeholder="内容"></textarea>
+            <select id="postStatus" style="width:160px"><option value="draft">草稿</option><option value="published">发布</option></select>
+            <button id="savePost">提交文章</button>
+            <div class="list" id="postList"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="section-head">
           <h2>审计 / 用户</h2>
           <div class="bar"><button id="loadUsers">加载用户</button><button id="loadAudit">加载日志</button></div>
         </div>
@@ -363,6 +437,103 @@
     };
     document.getElementById('refreshBlocks').onclick = loadBlocks;
 
+    async function loadFiles() {
+      const rows = await api('/api/files');
+      document.getElementById('fileList').innerHTML = rows.map(f => `<div class="list-item"><div><div>${f.original_name}</div><div class="muted">${Math.ceil(f.size/1024)} KB · ${f.visibility}</div></div><a class="pill" href="${f.url}" target="_blank">下载</a></div>`).join('');
+    }
+
+    document.getElementById('uploadFile').onclick = async () => {
+      const fileInput = document.getElementById('fileInput');
+      if (!fileInput.files.length) return alert('请选择文件');
+      const form = new FormData();
+      form.append('file', fileInput.files[0]);
+      const visibility = document.getElementById('fileVisibility').value;
+      const tags = document.getElementById('fileTags').value;
+      const resp = await fetch('/api/files/upload', { method: 'POST', headers: state.token ? { Authorization: `Bearer ${state.token}` } : {}, body: form });
+      if (!resp.ok) return alert('上传失败');
+      const data = await resp.json();
+      await api(`/api/files/${data.id}/meta`, { method: 'POST', body: JSON.stringify({ visibility, tags }) });
+      loadFiles();
+    };
+
+    async function loadClips() {
+      const data = await api('/api/clips');
+      document.getElementById('clipList').innerHTML = data.map(c => `<div class="list-item"><div><div>${c.title}</div><div class="muted">${c.source_url || '无来源'} · ${c.visibility}</div></div><span class="pill">${c.tags || ''}</span></div>`).join('');
+    }
+
+    document.getElementById('saveClip').onclick = async () => {
+      const payload = {
+        title: document.getElementById('clipTitle').value,
+        sourceUrl: document.getElementById('clipUrl').value,
+        excerpt: document.getElementById('clipExcerpt').value,
+        content: document.getElementById('clipContent').value,
+        tags: document.getElementById('clipTags').value,
+        visibility: document.getElementById('clipVisibility').value
+      };
+      await api('/api/clips', { method: 'POST', body: JSON.stringify(payload) });
+      loadClips();
+    };
+
+    async function loadTools() {
+      const tools = await api('/api/tools');
+      document.getElementById('toolGrid').innerHTML = tools.map(t => `<div class="card"><div class="section-head"><h3>${t.name}</h3><span class="pill">${t.category || '工具'}</span></div><div class="muted">${t.description || ''}</div><a class="pill" href="${t.url}" target="_blank">访问</a></div>`).join('');
+    }
+
+    document.getElementById('addTool').onclick = async () => {
+      const payload = {
+        name: document.getElementById('toolName').value,
+        url: document.getElementById('toolUrl').value,
+        category: document.getElementById('toolCategory').value,
+        description: document.getElementById('toolDesc').value
+      };
+      await api('/api/tools', { method: 'POST', body: JSON.stringify(payload) });
+      loadTools();
+    };
+
+    document.getElementById('refreshTools').onclick = loadTools;
+
+    async function loadNotes() {
+      const notes = await api('/api/notes');
+      document.getElementById('noteList').innerHTML = notes.map(n => `<div class="list-item"><div><div>${n.title}</div><div class="muted">${n.tags || ''} · ${n.visibility}</div></div><span class="pill">${new Date(n.updated_at).toLocaleString()}</span></div>`).join('');
+    }
+
+    document.getElementById('saveNote').onclick = async () => {
+      const payload = {
+        title: document.getElementById('noteTitle').value,
+        content: document.getElementById('noteContent').value,
+        tags: document.getElementById('noteTags').value,
+        visibility: document.getElementById('noteVisibility').value
+      };
+      await api('/api/notes', { method: 'POST', body: JSON.stringify(payload) });
+      loadNotes();
+    };
+
+    async function loadPosts() {
+      const posts = await api('/api/posts');
+      document.getElementById('postList').innerHTML = posts.map(p => `<div class="list-item"><div><div>${p.title}</div><div class="muted">${p.status}</div></div><span class="pill">${new Date(p.updated_at || p.created_at).toLocaleString()}</span></div>`).join('');
+    }
+
+    document.getElementById('savePost').onclick = async () => {
+      const payload = {
+        title: document.getElementById('postTitle').value,
+        content: document.getElementById('postContent').value,
+        status: document.getElementById('postStatus').value
+      };
+      await api('/api/posts', { method: 'POST', body: JSON.stringify(payload) });
+      loadPosts();
+    };
+
+    document.getElementById('refreshNotes').onclick = loadNotes;
+    document.getElementById('refreshPosts').onclick = loadPosts;
+
+    document.getElementById('searchBtn').onclick = async () => {
+      const q = document.getElementById('searchInput').value;
+      const data = await api(`/api/search?q=${encodeURIComponent(q)}`);
+      const count = data.icons.length + data.tools.length + data.posts.length + data.clips.length;
+      document.getElementById('searchCount').textContent = `${count} 命中`;
+      document.getElementById('toolGrid').scrollIntoView({ behavior: 'smooth' });
+    };
+
     document.getElementById('loadUsers').onclick = async () => {
       const data = await api('/api/admin/users');
       document.getElementById('users').innerHTML = data.map(u => `<div class="list-item"><div><div>${u.email}</div><div class="muted">${u.nickname} · ${u.vip_level || 'none'}</div></div><span class="pill">${u.is_admin ? 'admin' : (u.developer_code_id ? 'developer' : 'user')}</span></div>`).join('');
@@ -375,6 +546,11 @@
 
     loadIcons();
     loadBlocks();
+    loadFiles();
+    loadClips();
+    loadTools();
+    loadNotes();
+    loadPosts();
     setSession(state.role);
   </script>
 </body>
