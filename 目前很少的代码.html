@@ -3,725 +3,700 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Icon Hub Pro</title>
+    <title>Vesper Obsidian Nexus</title>
     <style id="app-style">
+        /* ======= 配置区（置顶） ======= */
         :root {
-            /* === 基础变量 === */
-            --bg-body: #ffffff;
-            --bg-sidebar: #f5f5f7;
-            --bg-hover: #e5e5ea;
-            --border: #d1d1d6;
-            --text-main: #1d1d1f;
-            --text-sub: #86868b;
-            --accent: #000000;
-            --radius: 8px;
-            --font-stack: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            
-            /* 尺寸配置 */
-            --sidebar-width: 220px;
+            --bg-body: #0a0a0a;
+            --bg-panel: #0f0f10;
+            --bg-elevated: #141416;
+            --bg-hover: #1d1d20;
+            --border: #1f1f22;
+            --text-main: #f5f5f7;
+            --text-sub: #8b8b90;
+            --accent: #e5e5e7;
+            --muted: #2a2a2f;
+            --radius: 10px;
+            --card-radius: 12px;
+            --font-stack: "SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             --icon-size: 48px;
-            --grid-gap: 20px;
+            --grid-gap: 18px;
+            --shadow-soft: 0 20px 80px rgba(0,0,0,0.35);
+            --shadow-strong: 0 14px 60px rgba(0,0,0,0.45);
         }
 
-        /* === 纯黑模式 (OLED Pure Black) === */
-        [data-theme="dark"] {
-            --bg-body: #000000;
-            --bg-sidebar: #000000;
-            --bg-hover: #1c1c1e;
-            --border: #333333;
-            --text-main: #ffffff;
-            --text-sub: #6e6e73;
-            --accent: #ffffff;
+        [data-theme="dusk"] {
+            --bg-body: #f5f5f7;
+            --bg-panel: #ffffff;
+            --bg-elevated: #f8f8fa;
+            --bg-hover: #ededf2;
+            --border: #e5e5eb;
+            --text-main: #1d1d1f;
+            --text-sub: #5e5e67;
+            --accent: #0d0d11;
+            --muted: #dcdce5;
         }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-        
+        [data-theme="graphite"] {
+            --bg-body: #060608;
+            --bg-panel: #0c0c0e;
+            --bg-elevated: #0f0f12;
+            --bg-hover: #16161b;
+            --border: #1a1a1f;
+            --text-main: #ececed;
+            --text-sub: #7b7b83;
+            --accent: #d6d6d9;
+            --muted: #2b2b30;
+        }
+
+        [data-theme="quartz"] {
+            --bg-body: #111;
+            --bg-panel: #151515;
+            --bg-elevated: #191919;
+            --bg-hover: #1f1f1f;
+            --border: #252525;
+            --text-main: #efefef;
+            --text-sub: #9a9aa0;
+            --accent: #dcdcdf;
+            --muted: #2f2f32;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body {
-            margin: 0;
-            font-family: var(--font-stack);
-            background: var(--bg-body);
-            color: var(--text-main);
-            height: 100vh;
-            display: flex;
-            overflow: hidden;
-            font-size: 13px;
+            margin: 0; height: 100vh; display: grid; grid-template-columns: 280px 1fr;
+            background: radial-gradient(circle at 20% 20%, rgba(255,255,255,0.02), transparent 40%), var(--bg-body);
+            color: var(--text-main); font-family: var(--font-stack); overflow: hidden;
         }
 
-        /* SVG 图标通用样式 */
-        .icon { width: 16px; height: 16px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
-        .icon-sm { width: 14px; height: 14px; }
+        h1,h2,h3,h4,h5,p { margin: 0; }
+        .accent { letter-spacing: 0.3px; }
 
-        /* ================== 侧边栏 (Sidebar) ================== */
+        /* ======= 侧栏 ======= */
         .sidebar {
-            width: var(--sidebar-width);
-            background: var(--bg-sidebar);
+            background: linear-gradient(180deg, rgba(255,255,255,0.04), transparent 40%), var(--bg-panel);
             border-right: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            padding: 20px 0;
-            z-index: 20;
-            flex-shrink: 0;
+            display: flex; flex-direction: column; padding: 22px; gap: 16px; box-shadow: var(--shadow-soft);
         }
 
-        .brand {
-            padding: 0 20px 20px;
-            font-size: 14px;
-            font-weight: 600;
-            letter-spacing: -0.3px;
-            color: var(--text-main);
-            opacity: 0.8;
-        }
+        .brand { display: flex; flex-direction: column; gap: 6px; }
+        .brand-title { font-weight: 700; font-size: 18px; letter-spacing: -0.2px; }
+        .brand-sub { color: var(--text-sub); font-size: 12px; }
 
-        .nav-list { flex: 1; overflow-y: auto; padding: 0 10px; }
+        .nav-group { display: grid; gap: 10px; }
+        .nav-item { padding: 10px 12px; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--radius);
+            color: var(--text-sub); cursor: pointer; display: flex; align-items: center; justify-content: space-between; transition: 0.2s; }
+        .nav-item:hover { background: var(--bg-hover); color: var(--text-main); }
+        .nav-item.active { border-color: var(--accent); color: var(--text-main); box-shadow: var(--shadow-soft); }
 
-        .nav-item {
-            padding: 8px 12px;
-            margin-bottom: 2px;
-            border-radius: 6px;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            color: var(--text-sub);
-            transition: color 0.2s, background 0.2s;
-        }
+        .nav-label { display: flex; align-items: center; gap: 8px; }
+        .pill { padding: 3px 8px; border-radius: 999px; background: var(--muted); color: var(--text-main); font-size: 11px; }
 
-        .nav-item:hover { color: var(--text-main); background: var(--bg-hover); }
-        .nav-item.active { color: var(--text-main); background: var(--bg-hover); font-weight: 600; }
-        .nav-count { opacity: 0.4; font-size: 12px; }
+        .sidebar-footer { margin-top: auto; display: grid; gap: 10px; }
+        .btn { border: 1px solid var(--border); background: var(--bg-elevated); color: var(--text-main); border-radius: var(--radius);
+            padding: 10px 12px; font-size: 12px; letter-spacing: 0.2px; cursor: pointer; transition: 0.2s; text-align: left; }
+        .btn:hover { background: var(--bg-hover); }
+        .btn-ghost { background: transparent; }
 
-        /* 底部设置按钮 (极简文字) */
-        .sidebar-footer {
-            padding: 10px 20px;
-            border-top: 1px solid var(--border);
-        }
-        .btn-prefs {
-            background: none; border: none; padding: 0;
-            color: var(--text-sub); cursor: pointer;
-            font-size: 12px; display: flex; align-items: center; gap: 6px;
-            opacity: 0.6; transition: opacity 0.2s;
-        }
-        .btn-prefs:hover { opacity: 1; color: var(--text-main); }
+        /* ======= 主区域 ======= */
+        .main { position: relative; overflow: hidden; display: flex; flex-direction: column; }
+        .topbar { display: flex; align-items: center; gap: 12px; padding: 18px 22px; border-bottom: 1px solid var(--border); }
+        .top-title { font-weight: 600; font-size: 16px; }
+        .search { flex: 1; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 12px; color: var(--text-main); }
+        .chips { display: flex; gap: 8px; align-items: center; }
+        .chip { padding: 8px 12px; border-radius: 10px; background: var(--bg-elevated); border: 1px solid var(--border); cursor: pointer; color: var(--text-sub); font-size: 12px; }
+        .chip.active { color: var(--text-main); border-color: var(--accent); }
 
-        /* ================== 主内容区 ================== */
-        .main {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-        }
+        .content { flex: 1; overflow-y: auto; padding: 22px; display: grid; grid-template-columns: 2fr 1fr; gap: 16px; }
+        .panel { background: var(--bg-panel); border: 1px solid var(--border); border-radius: var(--card-radius); padding: 16px; box-shadow: var(--shadow-soft); display: flex; flex-direction: column; gap: 12px; }
+        .panel-header { display: flex; justify-content: space-between; align-items: center; }
+        .panel-title { font-weight: 600; letter-spacing: 0.1px; }
+        .muted { color: var(--text-sub); font-size: 12px; }
 
-        /* 移动端 Header (仅在窄屏显示) */
-        .mobile-header {
-            display: none;
-            padding: 15px 20px;
-            border-bottom: 1px solid var(--border);
-            justify-content: space-between;
-            align-items: center;
-        }
-        .mobile-title { font-weight: 600; font-size: 14px; }
-        .mobile-btn { background: none; border: none; padding: 5px; color: var(--text-sub); cursor: pointer; }
+        /* ======= 网格 ======= */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: var(--grid-gap); }
+        .card { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--card-radius); padding: 14px; display: flex; flex-direction: column; align-items: center; gap: 12px; cursor: pointer; transition: 0.2s; position: relative; }
+        .card:hover { border-color: var(--accent); background: var(--bg-hover); }
+        .card.dragging { opacity: 0.5; border-style: dashed; }
+        .card img { width: var(--icon-size); height: var(--icon-size); object-fit: contain; filter: saturate(0); }
+        .card-name { color: var(--text-sub); font-size: 12px; text-align: center; }
+        .badge { position: absolute; top: 10px; right: 10px; padding: 4px 8px; background: var(--muted); border-radius: 8px; font-size: 10px; color: var(--text-main); }
 
-        .content-area {
-            flex: 1;
-            padding: 30px;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-        }
+        .list { display: grid; gap: 8px; }
+        .row { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; border-radius: var(--radius); background: var(--bg-elevated); border: 1px solid var(--border); }
 
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-            gap: var(--grid-gap);
-            padding-bottom: 100px;
-        }
+        .input, select { width: 100%; background: var(--bg-elevated); border: 1px solid var(--border); color: var(--text-main); border-radius: var(--radius); padding: 10px 12px; }
+        .split { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
 
-        /* ================== 卡片样式 (Clean) ================== */
-        .card {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 15px 5px;
-            border-radius: var(--radius);
-            cursor: pointer;
-            transition: background 0.2s;
-            position: relative;
-            border: 1px solid transparent;
-        }
+        .ctx-menu { position: fixed; background: var(--bg-panel); border: 1px solid var(--border); border-radius: 10px; padding: 8px; display: none; flex-direction: column; box-shadow: var(--shadow-strong); z-index: 50; min-width: 200px; }
+        .menu-item { padding: 10px; border-radius: 8px; color: var(--text-sub); cursor: pointer; }
+        .menu-item:hover { background: var(--bg-hover); color: var(--text-main); }
+        .divider { height: 1px; background: var(--border); margin: 6px 0; }
 
-        .card:hover { background: var(--bg-hover); }
-        /* 纯黑模式下的微边框增强识别度 */
-        [data-theme="dark"] .card { border-color: rgba(255,255,255,0.05); }
-        [data-theme="dark"] .card:hover { border-color: #333; }
+        .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--text-main); color: var(--bg-body); padding: 10px 16px; border-radius: 999px; opacity: 0; transition: 0.2s; font-size: 12px; }
 
-        .card-img {
-            width: var(--icon-size);
-            height: var(--icon-size);
-            object-fit: contain;
-            transition: transform 0.2s;
-            /* 允许拖拽 */
-            -webkit-user-drag: element;
-        }
+        .badge-dot { width: 8px; height: 8px; border-radius: 50%; background: #38c172; display: inline-block; margin-right: 6px; }
 
-        .card:active .card-img { transform: scale(0.95); }
-
-        .card-name {
-            margin-top: 12px;
-            font-size: 11px;
-            color: var(--text-sub);
-            text-align: center;
-            width: 100%;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .card:hover .card-name { color: var(--text-main); }
-
-
-        /* ================== 菜单 (Text Only) ================== */
-        .ctx-menu {
-            position: fixed;
-            background: var(--bg-body);
-            border: 1px solid var(--border);
-            padding: 4px;
-            min-width: 140px;
-            border-radius: 6px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-            display: none;
-            flex-direction: column;
-            z-index: 1000;
-        }
-        [data-theme="dark"] .ctx-menu { box-shadow: 0 0 0 1px #333, 0 10px 30px rgba(0,0,0,0.5); border: none; }
-
-        .menu-item {
-            padding: 8px 12px;
-            font-size: 12px;
-            color: var(--text-main);
-            cursor: pointer;
-            border-radius: 4px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .menu-item:hover { background: var(--bg-hover); }
-        .menu-divider { height: 1px; background: var(--border); margin: 3px 0; }
-        .menu-shortcut { opacity: 0.3; } /* 图标位 */
-
-        /* 移动端菜单样式 */
-        .menu-overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 999; display: none;
-        }
-
-        /* ================== 设置面板 ================== */
-        .settings-panel {
-            position: fixed; 
-            top: 0; right: 0; bottom: 0; /* 贴右 */
-            width: 300px; /* 固定宽 */
-            background: var(--bg-body);
-            z-index: 2000;
-            transform: translateX(100%); /* 横向隐藏 */
-            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            display: flex; flex-direction: column;
-            border-left: 1px solid var(--border);
-            box-shadow: -5px 0 30px rgba(0,0,0,0.1);
-        }
-        .settings-panel.open { transform: translateX(0); } /* 横向滑出 */
-
-        .settings-header {
-            padding: 15px 20px;
-            border-bottom: 1px solid var(--border);
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        .close-btn { background: none; border: none; color: var(--text-main); cursor: pointer; padding: 5px; }
-
-        .settings-content { flex: 1; overflow-y: auto; padding: 20px; width: 100%; }
-
-        .section { margin-bottom: 30px; }
-        .section-title { font-size: 11px; text-transform: uppercase; color: var(--text-sub); margin-bottom: 15px; letter-spacing: 0.5px; font-weight: 600; }
-        
-        /* 选项行 */
-        .opt-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; font-size: 13px; }
-        
-        input[type="range"] { width: 140px; height: 4px; background: var(--border); border-radius: 2px; -webkit-appearance: none; }
-        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; background: var(--text-main); border-radius: 50%; cursor: pointer; }
-
-        /* 切换按钮 */
-        .toggle-group { display: flex; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
-        .toggle-btn { flex: 1; background: none; border: none; padding: 8px; color: var(--text-sub); cursor: pointer; font-size: 12px; }
-        .toggle-btn.active { background: var(--text-main); color: var(--bg-body); }
-
-        /* 代码框 */
-        textarea {
-            width: 100%; height: 100px; background: var(--bg-hover); border: 1px solid var(--border);
-            color: var(--text-main); padding: 10px; font-family: monospace; font-size: 12px;
-            border-radius: 6px; resize: vertical; margin-bottom: 5px;
-        }
-
-        /* 提示条 */
-        .toast {
-            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-            background: var(--text-main); color: var(--bg-body); padding: 8px 16px;
-            border-radius: 4px; font-size: 12px; opacity: 0; pointer-events: none; transition: 0.2s;
-        }
-
-        /* ================== 响应式 ================== */
-        @media (max-width: 768px) {
-            .sidebar { display: none; } /* 隐藏侧边栏 */
-            .mobile-header { display: flex; } /* 显示手机顶栏 */
-            
-            /* 手机端横向导航栏 */
-            .mobile-nav { 
-                display: flex; overflow-x: auto; padding: 10px 15px; 
-                border-bottom: 1px solid var(--border); gap: 10px;
-            }
-            .mobile-nav::-webkit-scrollbar { display: none; }
-            .m-nav-pill {
-                padding: 6px 12px; font-size: 12px; border-radius: 15px; 
-                background: var(--bg-hover); color: var(--text-sub); white-space: nowrap;
-            }
-            .m-nav-pill.active { background: var(--text-main); color: var(--bg-body); }
-
-            .content-area { padding: 15px; }
-            
-            /* 手机端设置面板逻辑 */
-            .settings-panel { width: 100%; border-left: none; }
-            
-            /* 手机端菜单变为底部面板 */
-            .ctx-menu.mobile-sheet {
-                border-radius: 12px 12px 0 0;
-                width: 100%; bottom: 0; top: auto; left: 0; right: 0;
-                padding: 20px 20px 40px;
-                border: none; border-top: 1px solid var(--border);
-                transform: translateY(100%); transition: transform 0.2s;
-                display: flex !important;
-            }
-            .ctx-menu.mobile-sheet.show { transform: translateY(0); }
-            .menu-item { padding: 15px 0; font-size: 15px; }
+        @media (max-width: 900px) {
+            body { grid-template-columns: 1fr; }
+            .sidebar { position: fixed; z-index: 60; height: 100vh; transform: translateX(-100%); transition: 0.3s ease; width: 280px; }
+            .sidebar.open { transform: translateX(0); }
+            .topbar { position: sticky; top: 0; background: var(--bg-body); z-index: 30; }
+            .content { grid-template-columns: 1fr; }
+            .grid { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
         }
     </style>
     <style id="custom-css"></style>
 </head>
-<body data-theme="dark">
-
-    <div class="sidebar">
-        <div class="brand" id="lbl-brand"></div>
-        <div class="nav-list" id="sidebarNav"></div>
+<body data-theme="graphite">
+    <aside class="sidebar" id="sidebar">
+        <div class="brand">
+            <div class="brand-title">Vesper Obsidian Nexus</div>
+            <div class="brand-sub">冷淡黑白的多模态工作台</div>
+        </div>
+        <div class="nav-group" id="navGroup"></div>
         <div class="sidebar-footer">
-            <button class="btn-prefs" onclick="openSettings()">
-                <svg class="icon icon-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-                <span id="lbl-prefs"></span>
-            </button>
+            <button class="btn" id="btnDev" onclick="toggleDevPanel()">开发者模式</button>
+            <button class="btn btn-ghost" onclick="toggleSettings()">偏好与主题</button>
+            <button class="btn btn-ghost" onclick="toggleSidebar()">收起/展开</button>
         </div>
-    </div>
+    </aside>
 
-    <div class="main">
-        <div class="mobile-header">
-            <div class="mobile-title" id="lbl-mobile-title"></div>
-            <button class="mobile-btn" onclick="openSettings()">
-                <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-            </button>
+    <main class="main">
+        <div class="topbar">
+            <div class="top-title" id="sectionTitle">资源中心</div>
+            <input class="search" id="search" placeholder="搜索图标、资源、笔记..." oninput="handleSearch(event)">
+            <div class="chips" id="chipBar"></div>
         </div>
-        <div class="mobile-nav" id="mobileNav"></div>
-
-        <div class="content-area">
-            <div class="grid" id="grid">
+        <div class="content">
+            <section class="panel" style="grid-row: span 2;" id="workspacePanel">
+                <div class="panel-header">
+                    <div>
+                        <div class="panel-title">资源工作区</div>
+                        <div class="muted">分组可自由拖拽，三击删除（仅开发者）。</div>
+                    </div>
+                    <div class="chips" id="layoutChips"></div>
                 </div>
-        </div>
-    </div>
+                <div class="grid" id="cardGrid"></div>
+                <button class="btn" id="addIconBtn" style="display:none;" onclick="openAddIcon()">新增图标/链接</button>
+            </section>
 
-    <div class="menu-overlay" id="menuOverlay" onclick="closeMenu()"></div>
+            <section class="panel" id="resourcePanel">
+                <div class="panel-header">
+                    <div class="panel-title">功能分区</div>
+                    <div class="muted">网盘 / 资源 / 笔记 / 工具箱 / AI / 博客</div>
+                </div>
+                <div class="list" id="featureList"></div>
+            </section>
+
+            <section class="panel" id="accountPanel">
+                <div class="panel-header">
+                    <div class="panel-title">账户与权限</div>
+                    <div class="muted">注册、登录、VIP、封禁与开发者认证</div>
+                </div>
+                <div class="list" id="authArea"></div>
+            </section>
+
+            <section class="panel" id="adminPanel">
+                <div class="panel-header">
+                    <div class="panel-title">最高管理者控制台</div>
+                    <div class="muted">仅最高权限可见，管理识别码 / 优惠码 / 用户</div>
+                </div>
+                <div class="list" id="adminArea"></div>
+            </section>
+        </div>
+    </main>
+
     <div class="ctx-menu" id="ctxMenu">
-        <div class="menu-item" onclick="act('link')">
-            <span id="lbl-copy-link"></span>
-            <svg class="icon-sm menu-shortcut" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
-        </div>
-        <div class="menu-item" onclick="act('svg_link')">
-            <span id="lbl-copy-svg"></span>
-            <svg class="icon-sm menu-shortcut" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
-        </div>
-        <div class="menu-divider"></div>
-        <div class="menu-item" onclick="act('img')">
-            <span id="lbl-copy-img"></span>
-            <svg class="icon-sm menu-shortcut" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
-        </div>
-        <div class="menu-item" onclick="act('code')">
-            <span id="lbl-copy-code"></span>
-            <svg class="icon-sm menu-shortcut" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-        </div>
-        <div class="menu-divider"></div>
-        <div class="menu-item" onclick="act('ico')">
-            <span id="lbl-to-ico"></span>
-            <svg class="icon-sm menu-shortcut" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-        </div>
+        <div class="menu-item" onclick="copyAsset('png')">复制 PNG 链接</div>
+        <div class="menu-item" onclick="copyAsset('svg')">复制 SVG 链接</div>
+        <div class="menu-item" onclick="copyAsset('code')">复制 SVG 代码</div>
+        <div class="divider"></div>
+        <div class="menu-item" onclick="convertToIco()">转存 ICO</div>
+        <div class="menu-item" onclick="downloadAsset()">下载文件</div>
     </div>
 
-    <div class="settings-panel" id="settingsPanel">
-        <div class="settings-header">
-            <span style="font-weight:600;" id="lbl-settings-title"></span>
-            <button class="close-btn" onclick="closeSettings()">
-                <svg class="icon" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-            </button>
-        </div>
-        <div class="settings-content">
-            <div class="section">
-                <div class="section-title" id="lbl-appearance"></div>
-                <div class="toggle-group">
-                    <button class="toggle-btn" onclick="setTheme('light')" id="lbl-light">Light</button>
-                    <button class="toggle-btn active" onclick="setTheme('dark')" id="lbl-dark">Dark</button>
-                </div>
-            </div>
+    <div class="toast" id="toast"></div>
 
-            <div class="section">
-                <div class="section-title" id="lbl-layout"></div>
-                <div class="opt-row">
-                    <span id="lbl-size">Icon Size</span>
-                    <input type="range" min="32" max="100" value="48" oninput="setStyle('--icon-size', this.value+'px')">
-                </div>
-                <div class="opt-row">
-                    <span id="lbl-spacing">Spacing</span>
-                    <input type="range" min="10" max="50" value="20" oninput="setStyle('--grid-gap', this.value+'px')">
-                </div>
-            </div>
+    <script>
+        // ======= 配置数据（置顶） =======
+        const baseIconData = [
+            { category: "学科", items: [
+                { name: "Visual Studio Code", png: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vscode/vscode-original.svg", tags:["code","ide"] },
+                { name: "Python", png: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg", tags:["language"] },
+                { name: "Git", png: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg", tags:["version"] }
+            ]},
+            { category: "设计灵感", items: [
+                { name: "Figma", png: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/figma/figma-original.svg", tags:["design"] },
+                { name: "Sketch", png: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/sketch/sketch-original.svg", tags:["design"] }
+            ]},
+            { category: "工具箱", items: [
+                { name: "TinyPNG", png: "https://static-00.iconduck.com/assets.00/panda-icon-1024x1024-2gkxx9ys.png", tags:["compress"] },
+                { name: "Excalidraw", png: "https://raw.githubusercontent.com/excalidraw/excalidraw/master/public/favicon-256.png", tags:["whiteboard"] },
+                { name: "Cron", png: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/clockify.svg", tags:["time"] }
+            ]}
+        ];
 
-            <div class="section">
-                <div class="section-title" id="lbl-script"></div>
-                <div style="font-size:11px; color:var(--text-sub); margin-bottom:5px;" id="lbl-css">CSS</div>
-                <textarea id="inputCss" placeholder="body { ... }" oninput="saveAndApplyCss(this.value)"></textarea>
-                
-                <div style="font-size:11px; color:var(--text-sub); margin-bottom:5px; margin-top:10px;" id="lbl-js">JS</div>
-                <textarea id="inputJs" placeholder="console.log('Loaded');" onchange="saveJs(this.value)"></textarea>
-                <div style="font-size:10px; color:var(--text-sub); text-align:right;" id="lbl-save-hint"></div>
-            </div>
-        </div>
-    </div>
+        const featureBlocks = [
+            { title: "云存储", detail: "安全的加密云盘，支持临时直链分享。", status: "可用", id: "cloud", actions: ["上传", "备份", "链接"] },
+            { title: "软件资源", detail: "精选高质量应用与更新镜像。", status: "可用", id: "software", actions: ["下载", "校验", "历史版本"] },
+            { title: "笔记矩阵", detail: "多端同步，支持 Markdown / Canvas / 思维导图。", status: "可用", id: "notes", actions: ["新建", "分享", "导出"] },
+            { title: "博客与帖子", detail: "发布与订阅，沉淀长期洞见。", status: "预览", id: "blog", actions: ["写作", "排版", "投递"] },
+            { title: "科普知识库", detail: "可检索的知识卡片集合。", status: "可用", id: "wiki", actions: ["检索", "引用", "导出"] },
+            { title: "AI 接口集成", detail: "统一网关聚合多家模型，支持速率与 Token 控制。", status: "可用", id: "ai", actions: ["调用", "监控", "密钥"] }
+        ];
 
-    <div class="toast" id="toast">Copied</div>
+        const uiPresets = [
+            { key: "graphite", name: "Graphite", desc: "极冷淡暗色" },
+            { key: "dusk", name: "Dusk", desc: "柔和浅色" },
+            { key: "quartz", name: "Quartz", desc: "深石英" }
+        ];
 
-<script>
-// =========================================================================
-//                           语言 配置区域 
-// =========================================================================
-const trans = {
-    brand: "素材资源库",
-    prefsBtn: "偏好设置",
-    mobileTitle: "资源库",
+        // ======= 状态管理 =======
+        const deviceId = (() => {
+            const existing = localStorage.getItem('vesper_device');
+            if(existing) return existing;
+            const id = 'DEV-' + crypto.randomUUID();
+            localStorage.setItem('vesper_device', id);
+            return id;
+        })();
 
-    // 菜单项
-    copyLink: "复制PNG链接",
-    copySvgLink: "复制 SVG 链接",
-    copyImage: "复制图片文件",
-    copyCode: "复制 SVG 代码",
-    toIco: "转存为 ICO",
+        const state = {
+            currentCategory: null,
+            icons: JSON.parse(localStorage.getItem('nexus_icons') || 'null') || baseIconData,
+            devCodes: JSON.parse(localStorage.getItem('nexus_dev_codes') || 'null') || [
+                { code: 'Vesper', level: 'root', owner: 'Vesper', boundDevice: null, created: new Date().toISOString(), creator: 'system' }
+            ],
+            coupons: JSON.parse(localStorage.getItem('nexus_coupons') || '[]'),
+            users: JSON.parse(localStorage.getItem('nexus_users') || '[]'),
+            currentUser: JSON.parse(localStorage.getItem('nexus_current_user') || 'null'),
+            devSession: JSON.parse(localStorage.getItem('nexus_dev_session') || 'null'),
+            search: ''
+        };
 
-    // 设置面板
-    settingsTitle: "偏好设置",
-    appearance: "外观主题",
-    light: "浅色模式",
-    dark: "深色模式",
-    layout: "布局设置",
-    size: "图标大小",
-    spacing: "网格间距",
-    customScript: "自定义脚本",
-    cssLabel: "CSS 样式 (自动保存)",
-    jsLabel: "JavaScript (刷新生效)",
-    saveHint: "内容已保存",
+        // ======= 工具函数 =======
+        const persist = (key, data) => localStorage.setItem(key, JSON.stringify(data));
+        const toastEl = document.getElementById('toast');
+        function showToast(msg) {
+            toastEl.innerText = msg;
+            toastEl.style.opacity = 1;
+            setTimeout(()=> toastEl.style.opacity = 0, 2200);
+        }
 
-    // 提示信息 (Toast)
-    toastLink: "链接已复制",
-    toastSvg: "SVG 链接已复制",
-    toastImg: "图片已复制",
-    toastCode: "代码已复制",
-    toastIco: "ICO 已下载",
-    toastFail: "操作失败",
-    toastConvert: "正在转换...",
-    toastError: "转换出错"
-};
+        function currentDevCode() {
+            if(state.devSession && state.devSession.deviceId === deviceId) return state.devSession;
+            return null;
+        }
 
+        // ======= 渲染 =======
+        function renderNavigation() {
+            const nav = document.getElementById('navGroup');
+            nav.innerHTML = '';
+            state.icons.forEach(cat => {
+                const item = document.createElement('div');
+                item.className = 'nav-item ' + (state.currentCategory === cat.category ? 'active' : '');
+                item.innerHTML = `<div class="nav-label"><span class="badge-dot"></span>${cat.category}</div><span class="pill">${cat.items.length}</span>`;
+                item.onclick = () => { state.currentCategory = cat.category; render(); };
+                nav.appendChild(item);
+            });
+        }
 
-// =========================================================================
-//                           图标数据 配置区域 
-// =========================================================================
-const iconData = [
-    {
-        category: "学科",
-        items: [
-            { name: "Visual Studio Code", png: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vscode/vscode-original.svg" },
-            { name: "Python", png: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" },
-            { name: "Git", png: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg" }
-        ]
-    },
-    {
-        category: "设计灵感",
-        items: [
-            { name: "Figma", png: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/figma/figma-original.svg" },
-            { name: "Sketch", png: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/sketch/sketch-original.svg" }
-        ]
-    }
-];
+        function renderChips() {
+            const chipBar = document.getElementById('chipBar');
+            chipBar.innerHTML = '';
+            ['全部','图标库','网盘','资源','笔记','博客','AI','工具'].forEach(key => {
+                const chip = document.createElement('div');
+                chip.className = 'chip' + (state.searchSection === key ? ' active':'');
+                chip.innerText = key;
+                chip.onclick = () => { state.searchSection = state.searchSection === key ? null : key; render(); };
+                chipBar.appendChild(chip);
+            });
+        }
 
+        function renderLayouts() {
+            const layout = document.getElementById('layoutChips');
+            layout.innerHTML = '';
+            [32,48,72,96].forEach(size => {
+                const chip = document.createElement('div');
+                chip.className = 'chip';
+                chip.innerText = `尺寸 ${size}`;
+                chip.onclick = () => { document.documentElement.style.setProperty('--icon-size', size+'px'); };
+                layout.appendChild(chip);
+            });
+        }
 
-// =========================================================================
-//                            系统逻辑区域
-// =========================================================================
+        function renderGrid() {
+            const grid = document.getElementById('cardGrid');
+            grid.innerHTML = '';
+            const cat = state.icons.find(c => c.category === state.currentCategory) || state.icons[0];
+            state.currentCategory = cat.category;
+            document.getElementById('sectionTitle').innerText = `${cat.category} · ${cat.items.length}`;
+            const keyword = state.search?.toLowerCase() || '';
 
-    let currentCat = iconData[0].category;
-    let selectedItem = null;
-
-    function init() {
-        applyTranslations();
-        renderNav();
-        renderGrid(currentCat);
-        loadCustomScripts();
-        
-        document.addEventListener('click', e => {
-            if(!e.target.closest('.ctx-menu') && !e.target.closest('.card')) {
-                closeMenu();
-            }
-        });
-    }
-
-    // 应用翻译
-    function applyTranslations() {
-        // 主界面
-        document.getElementById('lbl-brand').innerText = trans.brand;
-        document.getElementById('lbl-prefs').innerText = trans.prefsBtn;
-        document.getElementById('lbl-mobile-title').innerText = trans.mobileTitle;
-        
-        // 菜单
-        document.getElementById('lbl-copy-link').innerText = trans.copyLink;
-        document.getElementById('lbl-copy-svg').innerText = trans.copySvgLink;
-        document.getElementById('lbl-copy-img').innerText = trans.copyImage;
-        document.getElementById('lbl-copy-code').innerText = trans.copyCode;
-        document.getElementById('lbl-to-ico').innerText = trans.toIco;
-        
-        // 设置
-        document.getElementById('lbl-settings-title').innerText = trans.settingsTitle;
-        document.getElementById('lbl-appearance').innerText = trans.appearance;
-        document.getElementById('lbl-light').innerText = trans.light;
-        document.getElementById('lbl-dark').innerText = trans.dark;
-        document.getElementById('lbl-layout').innerText = trans.layout;
-        document.getElementById('lbl-size').innerText = trans.size;
-        document.getElementById('lbl-spacing').innerText = trans.spacing;
-        document.getElementById('lbl-script').innerText = trans.customScript;
-        document.getElementById('lbl-css').innerText = trans.cssLabel;
-        document.getElementById('lbl-js').innerText = trans.jsLabel;
-        document.getElementById('lbl-save-hint').innerText = trans.saveHint;
-    }
-
-    function renderNav() {
-        const deskNav = document.getElementById('sidebarNav');
-        deskNav.innerHTML = '';
-        const mobNav = document.getElementById('mobileNav');
-        mobNav.innerHTML = '';
-
-        iconData.forEach(g => {
-            const dEl = document.createElement('div');
-            dEl.className = `nav-item ${g.category === currentCat ? 'active' : ''}`;
-            dEl.innerHTML = `<span>${g.category}</span><span class="nav-count">${g.items.length}</span>`;
-            dEl.onclick = () => switchCat(g.category);
-            deskNav.appendChild(dEl);
-
-            const mEl = document.createElement('div');
-            mEl.className = `m-nav-pill ${g.category === currentCat ? 'active' : ''}`;
-            mEl.innerText = g.category;
-            mEl.onclick = () => switchCat(g.category);
-            mobNav.appendChild(mEl);
-        });
-    }
-
-    function switchCat(cat) {
-        currentCat = cat;
-        renderNav();
-        renderGrid(cat);
-    }
-
-    function renderGrid(cat) {
-        const grid = document.getElementById('grid');
-        grid.innerHTML = '';
-        const group = iconData.find(g => g.category === cat);
-        if(group) {
-            group.items.forEach(item => {
+            cat.items.filter(it => !keyword || it.name.toLowerCase().includes(keyword) || (it.tags||[]).some(t=>t.includes(keyword))).forEach((item, idx) => {
                 const card = document.createElement('div');
                 card.className = 'card';
-                card.onclick = (e) => openMenu(e, item);
-                
-                const img = document.createElement('img');
-                img.src = item.png;
-                img.className = 'card-img';
-                img.draggable = true; // 允许拖拽
-
-                const name = document.createElement('div');
-                name.className = 'card-name';
-                name.innerText = item.name;
-
-                card.appendChild(img);
-                card.appendChild(name);
+                card.draggable = !!currentDevCode();
+                card.dataset.index = idx;
+                card.dataset.category = cat.category;
+                card.innerHTML = `<img src="${item.png}" alt="${item.name}"><div class="card-name">${item.name}</div>`;
+                if(item.tags?.length) {
+                    const tag = document.createElement('div');
+                    tag.className = 'badge';
+                    tag.innerText = item.tags.slice(0,2).join(' / ');
+                    card.appendChild(tag);
+                }
+                card.oncontextmenu = (e)=> openMenu(e, item, cat.category, idx);
+                card.onclick = ()=> openMenu({clientX:window.innerWidth-200, clientY:80}, item, cat.category, idx);
+                card.addEventListener('dragstart', dragStart);
+                card.addEventListener('dragover', dragOver);
+                card.addEventListener('drop', dropCard);
+                card.addEventListener('dragend', dragEnd);
+                let tapCount = 0; let timer;
+                card.addEventListener('click', ()=> {
+                    tapCount++; clearTimeout(timer);
+                    timer = setTimeout(()=> tapCount=0, 400);
+                    if(tapCount>=3 && currentDevCode()) { deleteIcon(cat.category, idx); tapCount=0; }
+                });
                 grid.appendChild(card);
             });
         }
-    }
 
-    // 菜单逻辑
-    function openMenu(e, item) {
-        e.stopPropagation();
-        selectedItem = item;
-        const menu = document.getElementById('ctxMenu');
-        const overlay = document.getElementById('menuOverlay');
-        const isMobile = window.innerWidth <= 768;
-
-        menu.style.display = 'flex';
-        
-        if (isMobile) {
-            overlay.style.display = 'block';
-            menu.classList.add('mobile-sheet');
-            setTimeout(() => menu.classList.add('show'), 10);
-        } else {
-            menu.classList.remove('mobile-sheet');
-            menu.classList.remove('show');
-            overlay.style.display = 'none'; // 桌面端不需要遮罩，靠全局点击关闭
-            
-            // 智能定位
-            let x = e.clientX;
-            let y = e.clientY;
-            const mw = 150; const mh = 200;
-            if (x + mw > window.innerWidth) x -= mw;
-            if (y + mh > window.innerHeight) y -= mh;
-            
-            menu.style.left = x + 'px';
-            menu.style.top = y + 'px';
+        function renderFeatures() {
+            const list = document.getElementById('featureList');
+            list.innerHTML = '';
+            featureBlocks.forEach(b => {
+                const row = document.createElement('div');
+                row.className = 'row';
+                row.innerHTML = `<div><div style="font-weight:600">${b.title}</div><div class="muted">${b.detail}</div></div><div class="pill">${b.status}</div>`;
+                row.onclick = ()=> showToast(`${b.title} 已加载`);
+                list.appendChild(row);
+            });
         }
-    }
 
-    function closeMenu() {
-        const menu = document.getElementById('ctxMenu');
-        const overlay = document.getElementById('menuOverlay');
-        
-        if (menu.classList.contains('mobile-sheet')) {
-            menu.classList.remove('show');
-            setTimeout(() => {
-                menu.style.display = 'none';
-                overlay.style.display = 'none';
-            }, 200);
-        } else {
-            menu.style.display = 'none';
-        }
-    }
-
-    // 动作处理
-    async function act(type) {
-        closeMenu();
-        if(!selectedItem) return;
-        const url = selectedItem.png;
-
-        try {
-            if(type === 'link') {
-                await navigator.clipboard.writeText(url);
-                showToast(trans.toastLink);
-            } else if (type === 'svg_link') {
-                await navigator.clipboard.writeText(url);
-                showToast(trans.toastSvg);
-            } else if (type === 'img') {
-                const blob = await fetch(url).then(r => r.blob());
-                await navigator.clipboard.write([new ClipboardItem({'image/png': blob})]);
-                showToast(trans.toastImg);
-            } else if (type === 'code') {
-                const text = await fetch(url).then(r => r.text());
-                await navigator.clipboard.writeText(text);
-                showToast(trans.toastCode);
-            } else if (type === 'ico') {
-                convertIco(url, selectedItem.name);
+        function renderAuth() {
+            const area = document.getElementById('authArea');
+            area.innerHTML = '';
+            const user = state.currentUser;
+            if(!user) {
+                area.appendChild(buildAuthForm());
+            } else {
+                const row = document.createElement('div');
+                row.className = 'row';
+                row.innerHTML = `<div><div style="font-weight:600">${user.nickname} (${user.email})</div><div class="muted">等级：${user.role || '用户'} · VIP：${user.vip||'无'}</div></div><div class="chips"></div>`;
+                const action = document.createElement('div');
+                action.className = 'chips';
+                const logout = document.createElement('div'); logout.className='chip'; logout.innerText='退出'; logout.onclick=logoutUser;
+                const dev = document.createElement('div'); dev.className='chip'; dev.innerText='绑定开发者'; dev.onclick=()=> openDevVerify();
+                const vip = document.createElement('div'); vip.className='chip'; vip.innerText='开通 VIP'; vip.onclick=()=> openVipPurchase();
+                action.append(logout, dev, vip);
+                row.querySelector('.chips').replaceWith(action);
+                area.appendChild(row);
             }
-        } catch(e) {
-            console.error(e);
-            showToast(trans.toastFail);
         }
-    }
 
-    async function convertIco(url, name) {
-        showToast(trans.toastConvert);
-        try {
-            const img = new Image();
-            img.crossOrigin = "Anonymous";
-            img.src = url;
-            await new Promise(r => img.onload = r);
-
-            const c = document.createElement('canvas');
-            c.width = 256; c.height = 256;
-            const ctx = c.getContext('2d');
-            ctx.drawImage(img, 0, 0, 256, 256);
-
-            const blob = await new Promise(r => c.toBlob(r, 'image/png'));
-            const buf = await blob.arrayBuffer();
-
-            const header = new Uint8Array([0,0,1,0,1,0]);
-            const entry = new Uint8Array([0,0,0,0,1,0,32,0,0,0,0,0,22,0,0,0]);
-            new DataView(entry.buffer).setUint32(8, buf.byteLength, true);
-
-            const icoUrl = URL.createObjectURL(new Blob([header, entry, buf], {type: 'image/x-icon'}));
-            const a = document.createElement('a');
-            a.href = icoUrl;
-            a.download = name + '.ico';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            showToast(trans.toastIco);
-        } catch(e) {
-            showToast(trans.toastError);
+        function renderAdmin() {
+            const area = document.getElementById('adminArea');
+            area.innerHTML = '';
+            const dev = currentDevCode();
+            if(!dev || (dev.level !== 'root' && dev.level !== 'elite')) {
+                const blocked = document.createElement('div');
+                blocked.className = 'row';
+                blocked.innerHTML = '<div><div style="font-weight:600">需最高权限</div><div class="muted">绑定最高权限识别码后可管理。</div></div>';
+                area.appendChild(blocked);
+                return;
+            }
+            area.appendChild(buildCodeManager());
+            area.appendChild(buildCouponManager());
+            area.appendChild(buildUserInspector());
         }
-    }
 
-    // 设置与自定义脚本
-    function openSettings() {
-        document.getElementById('settingsPanel').classList.add('open');
-        document.getElementById('inputCss').value = localStorage.getItem('user_css') || '';
-        document.getElementById('inputJs').value = localStorage.getItem('user_js') || '';
-    }
-    
-    function closeSettings() {
-        document.getElementById('settingsPanel').classList.remove('open');
-    }
+        function renderDevButton() {
+            const btn = document.getElementById('btnDev');
+            const dev = currentDevCode();
+            if(dev) {
+                btn.innerText = `开发者模式 · ${dev.level.toUpperCase()}`;
+                document.getElementById('addIconBtn').style.display = 'block';
+            } else {
+                btn.innerText = '开发者模式';
+                document.getElementById('addIconBtn').style.display = 'none';
+            }
+        }
 
-    function setTheme(theme) {
-        document.body.setAttribute('data-theme', theme);
-        const btns = document.querySelectorAll('.toggle-btn');
-        btns.forEach(b => b.classList.remove('active'));
-        event.target.classList.add('active');
-    }
+        function render() {
+            renderNavigation();
+            renderChips();
+            renderLayouts();
+            renderGrid();
+            renderFeatures();
+            renderAuth();
+            renderAdmin();
+            renderDevButton();
+        }
 
-    function setStyle(key, val) {
-        document.documentElement.style.setProperty(key, val);
-    }
+        // ======= 拖拽与编辑 =======
+        let dragPayload = null;
+        function dragStart(e) { dragPayload = { category: e.currentTarget.dataset.category, index: Number(e.currentTarget.dataset.index) }; e.currentTarget.classList.add('dragging'); }
+        function dragOver(e) { e.preventDefault(); }
+        function dragEnd(e) { e.currentTarget.classList.remove('dragging'); dragPayload=null; }
+        function dropCard(e) {
+            e.preventDefault();
+            if(!currentDevCode() || !dragPayload) return;
+            const targetCat = e.currentTarget.dataset.category;
+            const targetIdx = Number(e.currentTarget.dataset.index);
+            const sourceCat = state.icons.find(c=>c.category===dragPayload.category);
+            const [item] = sourceCat.items.splice(dragPayload.index,1);
+            const destCat = state.icons.find(c=>c.category===targetCat);
+            destCat.items.splice(targetIdx,0,item);
+            persist('nexus_icons', state.icons);
+            render();
+        }
 
-    function saveAndApplyCss(css) {
-        localStorage.setItem('user_css', css);
-        document.getElementById('custom-css').innerHTML = css;
-    }
+        function deleteIcon(category, idx) {
+            const cat = state.icons.find(c=>c.category===category);
+            cat.items.splice(idx,1);
+            persist('nexus_icons', state.icons);
+            showToast('已删除');
+            render();
+        }
 
-    function saveJs(js) {
-        localStorage.setItem('user_js', js);
-    }
+        function openAddIcon() {
+            const name = prompt('名称'); if(!name) return;
+            const link = prompt('PNG/SVG 链接'); if(!link) return;
+            const category = prompt('分组（若不存在将自动创建）', state.currentCategory);
+            const tags = prompt('标签（逗号分隔，可选）','').split(',').map(t=>t.trim()).filter(Boolean);
+            let cat = state.icons.find(c=>c.category===category);
+            if(!cat) { cat = { category, items: [] }; state.icons.push(cat); }
+            cat.items.push({ name, png: link, tags });
+            persist('nexus_icons', state.icons);
+            render();
+        }
 
-    function loadCustomScripts() {
-        const css = localStorage.getItem('user_css');
-        if(css) document.getElementById('custom-css').innerHTML = css;
-        const js = localStorage.getItem('user_js');
-        if(js) {
+        // ======= 上下文菜单 =======
+        let selectedAsset = null;
+        function openMenu(e, item, category, idx) {
+            e.preventDefault();
+            selectedAsset = { item, category, idx };
+            const menu = document.getElementById('ctxMenu');
+            menu.style.display = 'flex';
+            menu.style.left = `${e.clientX}px`;
+            menu.style.top = `${e.clientY}px`;
+        }
+        document.addEventListener('click', (e)=>{ if(!e.target.closest('.ctx-menu')) document.getElementById('ctxMenu').style.display='none'; });
+
+        async function copyAsset(type) {
+            if(!selectedAsset) return;
+            const url = selectedAsset.item.png;
             try {
-                const script = document.createElement('script');
-                script.textContent = js;
-                document.body.appendChild(script);
-            } catch(e) { console.error("User JS Error", e); }
+                if(type==='png' || type==='svg') await navigator.clipboard.writeText(url);
+                if(type==='code') {
+                    const text = await fetch(url).then(r=>r.text());
+                    await navigator.clipboard.writeText(text);
+                }
+                showToast('已复制');
+            } catch { showToast('复制失败'); }
         }
-    }
 
-    function showToast(msg) {
-        const t = document.getElementById('toast');
-        t.innerText = msg;
-        t.style.opacity = 1;
-        setTimeout(() => t.style.opacity = 0, 2000);
-    }
+        async function convertToIco() {
+            if(!selectedAsset) return;
+            try {
+                const img = new Image(); img.crossOrigin='anonymous'; img.src = selectedAsset.item.png;
+                await new Promise(res=> img.onload = res);
+                const canvas = document.createElement('canvas'); canvas.width=256; canvas.height=256;
+                canvas.getContext('2d').drawImage(img,0,0,256,256);
+                const blob = await new Promise(res=> canvas.toBlob(res,'image/png'));
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a'); a.href = url; a.download = `${selectedAsset.item.name}.ico`; a.click();
+                showToast('已生成 ICO');
+            } catch { showToast('转换失败'); }
+        }
+        async function downloadAsset() { if(selectedAsset) window.open(selectedAsset.item.png,'_blank'); }
 
-    init();
-</script>
+        // ======= 主题与设置 =======
+        function toggleSettings() {
+            const next = prompt('输入主题: graphite / dusk / quartz / 或 CSS 定制');
+            if(!next) return;
+            if(uiPresets.find(p=>p.key===next)) {
+                document.body.setAttribute('data-theme', next);
+                localStorage.setItem('nexus_theme', next);
+            } else {
+                document.getElementById('custom-css').innerHTML = next;
+                localStorage.setItem('user_css', next);
+            }
+        }
+
+        const savedTheme = localStorage.getItem('nexus_theme');
+        if(savedTheme) document.body.setAttribute('data-theme', savedTheme);
+        const savedCss = localStorage.getItem('user_css');
+        if(savedCss) document.getElementById('custom-css').innerHTML = savedCss;
+
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
+
+        // ======= 搜索 =======
+        function handleSearch(e) { state.search = e.target.value; renderGrid(); }
+
+        // ======= 账户体系 =======
+        function buildAuthForm() {
+            const wrap = document.createElement('div');
+            wrap.className = 'row';
+            wrap.innerHTML = `<div style="width:100%">
+                <div class="split">
+                    <input class="input" id="authEmail" placeholder="邮箱">
+                    <input class="input" id="authNick" placeholder="昵称">
+                </div>
+                <div class="split" style="margin-top:8px;">
+                    <input class="input" id="authPass" placeholder="密码" type="password">
+                    <input class="input" id="authCode" placeholder="验证码">
+                </div>
+                <div class="split" style="margin-top:8px;">
+                    <button class="btn" onclick="sendVerify()">发送验证码</button>
+                    <button class="btn" onclick="register()">注册</button>
+                </div>
+                <div class="split" style="margin-top:8px;">
+                    <button class="btn btn-ghost" onclick="login()">登录</button>
+                    <button class="btn btn-ghost" onclick="recoverPass()">找回密码</button>
+                </div>
+            </div>`;
+            return wrap;
+        }
+
+        function sendVerify() {
+            const email = document.getElementById('authEmail').value;
+            if(!email) return showToast('请输入邮箱');
+            const code = Math.floor(Math.random()*900000+100000).toString();
+            localStorage.setItem('verify_'+email, code);
+            showToast('验证码已生成: '+code);
+        }
+
+        function register() {
+            const email = document.getElementById('authEmail').value;
+            const nick = document.getElementById('authNick').value || '匿名';
+            const pass = document.getElementById('authPass').value;
+            const code = document.getElementById('authCode').value;
+            if(localStorage.getItem('verify_'+email)!==code) return showToast('验证码错误');
+            if(state.users.find(u=>u.email===email)) return showToast('已注册');
+            const user = { email, nickname:nick, pass, role:'user', vip:null, status:'active', created:new Date().toISOString() };
+            state.users.push(user); persist('nexus_users', state.users);
+            state.currentUser = user; persist('nexus_current_user', user);
+            showToast('注册成功'); renderAuth(); renderAdmin();
+        }
+
+        function login() {
+            const email = document.getElementById('authEmail').value;
+            const pass = document.getElementById('authPass').value;
+            const user = state.users.find(u=>u.email===email && u.pass===pass);
+            if(!user) return showToast('账号或密码错误');
+            if(user.status==='banned') return showToast('已封禁');
+            state.currentUser = user; persist('nexus_current_user', user);
+            showToast('已登录'); renderAuth();
+        }
+
+        function logoutUser() { state.currentUser=null; persist('nexus_current_user', null); renderAuth(); }
+        function recoverPass() { const email = prompt('输入邮箱'); if(!email) return; const user = state.users.find(u=>u.email===email); if(!user) return showToast('未注册'); const newPass = prompt('新密码'); user.pass=newPass; persist('nexus_users', state.users); showToast('已重置'); }
+
+        function openVipPurchase() {
+            const plan = prompt('选择：月卡/季卡/年卡');
+            const coupon = prompt('如有优惠码请输入，否则留空');
+            let discount = 1; let note='';
+            const found = state.coupons.find(c=>c.code===coupon && !c.used);
+            if(found) { discount = found.rate; found.used=true; persist('nexus_coupons', state.coupons); note = `优惠 ${found.label}`; }
+            const prices = { '月卡': 20, '季卡': 50, '年卡': 160 };
+            const price = prices[plan] || 0;
+            if(!state.currentUser) return showToast('需登录');
+            state.currentUser.vip = plan || '永久';
+            persist('nexus_current_user', state.currentUser);
+            persist('nexus_users', state.users.map(u=> u.email===state.currentUser.email? state.currentUser : u));
+            showToast(`已开通 ${plan || '体验'} ${note} 价格：${(price*discount)||0}`);
+        }
+
+        // ======= 开发者模式 =======
+        function toggleDevPanel() {
+            const dev = currentDevCode();
+            if(dev) { showToast('已是开发者：'+dev.level); return; }
+            openDevVerify();
+        }
+
+        function openDevVerify() {
+            const code = prompt('输入开发者识别码');
+            if(!code) return;
+            const entry = state.devCodes.find(c=>c.code===code);
+            if(!entry) return showToast('识别码无效');
+            if(entry.boundDevice && entry.boundDevice!==deviceId) return showToast('识别码已绑定其他设备');
+            entry.boundDevice = deviceId; persist('nexus_dev_codes', state.devCodes);
+            state.devSession = { code: entry.code, level: entry.level, deviceId }; persist('nexus_dev_session', state.devSession);
+            showToast('开发者模式已开启'); render();
+        }
+
+        function buildCodeManager() {
+            const panel = document.createElement('div'); panel.className='row';
+            panel.innerHTML = '<div><div style="font-weight:600">开发者识别码</div><div class="muted">生成、绑定、回收</div></div>';
+            const btn = document.createElement('button'); btn.className='btn'; btn.innerText='生成';
+            btn.onclick = () => {
+                const custom = prompt('自定义识别码（留空自动生成）');
+                const qty = Number(prompt('生成数量', '1')) || 1;
+                const level = prompt('等级：root / elite / dev','dev');
+                for(let i=0;i<qty;i++) {
+                    const code = custom || ('DEV-'+Math.random().toString(36).slice(2,8)).toUpperCase();
+                    state.devCodes.push({ code, level, owner:'generated', boundDevice:null, created:new Date().toISOString(), creator: state.devSession.code });
+                }
+                persist('nexus_dev_codes', state.devCodes); renderAdmin(); showToast('已生成');
+            };
+            panel.appendChild(btn);
+            const list = document.createElement('div'); list.className='list'; list.style.marginTop='10px';
+            state.devCodes.slice(-6).reverse().forEach(c=> {
+                const row = document.createElement('div'); row.className='row';
+                row.innerHTML = `<div><div>${c.code}</div><div class="muted">等级:${c.level} · 绑定:${c.boundDevice||'未绑定'} · 生成者:${c.creator}</div></div>`;
+                const action = document.createElement('div'); action.className='chip'; action.innerText='收回'; action.onclick=()=> { state.devCodes = state.devCodes.filter(x=>x.code!==c.code); persist('nexus_dev_codes', state.devCodes); renderAdmin(); };
+                row.appendChild(action); list.appendChild(row);
+            });
+            panel.appendChild(list);
+            return panel;
+        }
+
+        function buildCouponManager() {
+            const panel = document.createElement('div'); panel.className='row';
+            panel.innerHTML = '<div><div style="font-weight:600">优惠码</div><div class="muted">折扣 / 免费体验 / 永久解锁</div></div>';
+            const btn = document.createElement('button'); btn.className='btn'; btn.innerText='生成优惠码';
+            btn.onclick = () => {
+                const label = prompt('类型：9折/7折/5折/3折/免费月卡/免费周卡/免费季卡/免费年卡/永久');
+                const rateMap = { '9折':0.9,'7折':0.7,'5折':0.5,'3折':0.3,'免费月卡':0,'免费周卡':0,'免费季卡':0,'免费年卡':0,'永久':0 };
+                const rate = rateMap[label] ?? 1;
+                const code = ('VIP-'+Math.random().toString(36).slice(2,8)).toUpperCase();
+                state.coupons.push({ code, label, rate, used:false, created:new Date().toISOString(), creator: state.devSession.code });
+                persist('nexus_coupons', state.coupons); renderAdmin(); showToast(code);
+            };
+            panel.appendChild(btn);
+            const list = document.createElement('div'); list.className='list'; list.style.marginTop='10px';
+            state.coupons.slice(-5).reverse().forEach(c=> {
+                const row = document.createElement('div'); row.className='row';
+                row.innerHTML = `<div><div>${c.code}</div><div class="muted">${c.label} · ${c.used?'已用':'未用'} · ${c.creator}</div></div>`;
+                const revoke = document.createElement('div'); revoke.className='chip'; revoke.innerText='收回'; revoke.onclick=()=> { state.coupons = state.coupons.filter(x=>x.code!==c.code); persist('nexus_coupons', state.coupons); renderAdmin(); };
+                row.appendChild(revoke); list.appendChild(row);
+            });
+            panel.appendChild(list);
+            return panel;
+        }
+
+        function buildUserInspector() {
+            const panel = document.createElement('div'); panel.className='row';
+            panel.innerHTML = '<div><div style="font-weight:600">用户总览</div><div class="muted">封禁 / VIP 指定 / 授予开发者</div></div>';
+            const list = document.createElement('div'); list.className='list'; list.style.marginTop='10px';
+            state.users.slice(-5).reverse().forEach(u=> {
+                const row = document.createElement('div'); row.className='row';
+                row.innerHTML = `<div><div>${u.nickname}</div><div class="muted">${u.email} · ${u.vip||'无'} · ${u.status}</div></div>`;
+                const actions = document.createElement('div'); actions.className='chips';
+                const ban = document.createElement('div'); ban.className='chip'; ban.innerText='封禁'; ban.onclick=()=> { u.status='banned'; persist('nexus_users', state.users); renderAdmin(); };
+                const gift = document.createElement('div'); gift.className='chip'; gift.innerText='授予VIP'; gift.onclick=()=> { u.vip='永久'; persist('nexus_users', state.users); renderAdmin(); };
+                const dev = document.createElement('div'); dev.className='chip'; dev.innerText='授予开发者'; dev.onclick=()=> { const code = ('DEV-'+Math.random().toString(36).slice(2,8)).toUpperCase(); state.devCodes.push({ code, level:'dev', owner:u.email, boundDevice:null, created:new Date().toISOString(), creator: state.devSession.code }); persist('nexus_dev_codes', state.devCodes); renderAdmin(); };
+                actions.append(ban,gift,dev); row.appendChild(actions);
+                list.appendChild(row);
+            });
+            panel.appendChild(list);
+            return panel;
+        }
+
+        // ======= 初始化 =======
+        state.currentCategory = state.icons[0]?.category;
+        render();
+    </script>
 </body>
 </html>
